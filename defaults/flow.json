@@ -1,15 +1,8 @@
 [
   {
-      "id": "360714cf.0c195c",
-      "type": "tab",
-      "label": "Flow 1",
-      "disabled": false,
-      "info": ""
-  },
-  {
       "id": "39011ec7.7f9a82",
       "type": "tab",
-      "label": "Flow 1",
+      "label": "SMS notifications",
       "disabled": false,
       "info": ""
   },
@@ -244,7 +237,7 @@
       "type": "function",
       "z": "39011ec7.7f9a82",
       "name": "Create SMS(es) from phone number(s)",
-      "func": "var phone = msg.payload.labels.Phone.split(',')\nvar smses = []\n\n/* Create one SMS for each phone number */\nfor (var i = 0; i < phone.length; i++) {\n    var sms = {\n        topic: phone[i],\n        payload: msg.payload.labels.Message\n    }\n    smses.push(sms)\n}\n\nnode.warn(smses)\n\nreturn [ smses ]",
+      "func": "var phone = msg.payload.labels.Phone.split(',')\nvar smses = []\n\n/* Create one SMS for each phone number */\nfor (var i = 0; i < phone.length; i++) {\n    var sms = {\n        topic: phone[i],\n        payload: msg.payload.labels.Message\n    }\n    smses.push(sms)\n}\n\nreturn [ smses ]",
       "outputs": 1,
       "noerr": 0,
       "x": 790,
