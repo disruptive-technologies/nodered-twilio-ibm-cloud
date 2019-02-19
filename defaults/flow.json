@@ -1,358 +1,550 @@
 [
-  {
-      "id": "39011ec7.7f9a82",
-      "type": "tab",
-      "label": "SMS notifications",
-      "disabled": false,
-      "info": ""
-  },
-  {
-      "id": "b80d47fa.e56038",
-      "type": "http in",
-      "z": "39011ec7.7f9a82",
-      "name": "",
-      "url": "/events",
-      "method": "post",
-      "upload": false,
-      "swaggerDoc": "",
-      "x": 130,
-      "y": 160,
-      "wires": [
-          [
-              "fcc3055f.c377e8",
-              "d5cb4856.b3e0f8",
-              "8d3304e5.e1b4b8"
-          ]
-      ]
-  },
-  {
-      "id": "fcc3055f.c377e8",
-      "type": "http response",
-      "z": "39011ec7.7f9a82",
-      "name": "Event Received OK",
-      "statusCode": "200",
-      "headers": {},
-      "x": 570,
-      "y": 160,
-      "wires": []
-  },
-  {
-      "id": "5e45afcb.c286d",
-      "type": "debug",
-      "z": "39011ec7.7f9a82",
-      "name": "Notify enabled",
-      "active": false,
-      "tosidebar": true,
-      "console": false,
-      "tostatus": false,
-      "complete": "payload",
-      "x": 600,
-      "y": 420,
-      "wires": []
-  },
-  {
-      "id": "24cb1b6a.c4ca44",
-      "type": "switch",
-      "z": "39011ec7.7f9a82",
-      "name": "Switch on type",
-      "property": "payload.event.eventType",
-      "propertyType": "msg",
-      "rules": [
-          {
-              "t": "eq",
-              "v": "touch",
-              "vt": "str"
-          },
-          {
-              "t": "eq",
-              "v": "temperature",
-              "vt": "str"
-          },
-          {
-              "t": "eq",
-              "v": "objectPresent",
-              "vt": "str"
-          }
-      ],
-      "checkall": "true",
-      "repair": false,
-      "outputs": 3,
-      "x": 600,
-      "y": 360,
-      "wires": [
-          [
-              "945b2bb9.d27498"
-          ],
-          [
-              "b9888a72.1185c8"
-          ],
-          [
-              "e3477234.872dd"
-          ]
-      ]
-  },
-  {
-      "id": "d5cb4856.b3e0f8",
-      "type": "switch",
-      "z": "39011ec7.7f9a82",
-      "name": "Notifications Enabled",
-      "property": "payload.labels.Notify",
-      "propertyType": "msg",
-      "rules": [
-          {
-              "t": "eq",
-              "v": "true",
-              "vt": "str"
-          }
-      ],
-      "checkall": "true",
-      "repair": false,
-      "outputs": 1,
-      "x": 340,
-      "y": 360,
-      "wires": [
-          [
-              "24cb1b6a.c4ca44",
-              "5e45afcb.c286d"
-          ]
-      ]
-  },
-  {
-      "id": "945b2bb9.d27498",
-      "type": "switch",
-      "z": "39011ec7.7f9a82",
-      "name": "If TouchTrigger",
-      "property": "payload.labels.TouchTrigger",
-      "propertyType": "msg",
-      "rules": [
-          {
-              "t": "eq",
-              "v": "true",
-              "vt": "str"
-          }
-      ],
-      "checkall": "true",
-      "repair": false,
-      "outputs": 1,
-      "x": 880,
-      "y": 300,
-      "wires": [
-          [
-              "9c0aacec.f42ae"
-          ]
-      ]
-  },
-  {
-      "id": "e3477234.872dd",
-      "type": "switch",
-      "z": "39011ec7.7f9a82",
-      "name": "Trigger same as Event",
-      "property": "payload.labels.ObjectPresentTrigger",
-      "propertyType": "msg",
-      "rules": [
-          {
-              "t": "eq",
-              "v": "payload.event.data.objectPresent.state",
-              "vt": "msg"
-          }
-      ],
-      "checkall": "true",
-      "repair": false,
-      "outputs": 1,
-      "x": 900,
-      "y": 420,
-      "wires": [
-          [
-              "9c0aacec.f42ae"
-          ]
-      ]
-  },
-  {
-      "id": "9c0aacec.f42ae",
-      "type": "link out",
-      "z": "39011ec7.7f9a82",
-      "name": "Send Notification",
-      "links": [
-          "2ebca52b.43bd4a"
-      ],
-      "x": 1155,
-      "y": 360,
-      "wires": []
-  },
-  {
-      "id": "2ebca52b.43bd4a",
-      "type": "link in",
-      "z": "39011ec7.7f9a82",
-      "name": "Send Notification",
-      "links": [
-          "9c0aacec.f42ae"
-      ],
-      "x": 75,
-      "y": 720,
-      "wires": [
-          [
-              "d460d553.cf7148",
-              "fc7af45.d08d908"
-          ]
-      ]
-  },
-  {
-      "id": "a5c97820.b0c488",
-      "type": "switch",
-      "z": "39011ec7.7f9a82",
-      "name": "Has \"Phone\" label",
-      "property": "payload.labels.Phone",
-      "propertyType": "msg",
-      "rules": [
-          {
-              "t": "nnull"
-          }
-      ],
-      "checkall": "true",
-      "repair": false,
-      "outputs": 1,
-      "x": 490,
-      "y": 720,
-      "wires": [
-          [
-              "c5192ae4.4d0f48"
-          ]
-      ]
-  },
-  {
-      "id": "1971fbb3.b433d4",
-      "type": "twilio out",
-      "z": "39011ec7.7f9a82",
-      "service": "_ext_",
-      "twilio": "",
-      "from": "",
-      "number": "",
-      "name": "Send SMS",
-      "x": 1090,
-      "y": 700,
-      "wires": []
-  },
-  {
-      "id": "c5192ae4.4d0f48",
-      "type": "function",
-      "z": "39011ec7.7f9a82",
-      "name": "Create SMS(es) from phone number(s)",
-      "func": "var phone = msg.payload.labels.Phone.split(',')\nvar smses = []\n\n/* Create one SMS for each phone number */\nfor (var i = 0; i < phone.length; i++) {\n    var sms = {\n        topic: phone[i],\n        payload: msg.payload.labels.Message\n    }\n    smses.push(sms)\n}\n\nreturn [ smses ]",
-      "outputs": 1,
-      "noerr": 0,
-      "x": 790,
-      "y": 720,
-      "wires": [
-          [
-              "1971fbb3.b433d4",
-              "3d60c524.cdef6a"
-          ]
-      ]
-  },
-  {
-      "id": "d460d553.cf7148",
-      "type": "switch",
-      "z": "39011ec7.7f9a82",
-      "name": "Has \"Message\" label",
-      "property": "payload.labels.Message",
-      "propertyType": "msg",
-      "rules": [
-          {
-              "t": "nnull"
-          }
-      ],
-      "checkall": "true",
-      "repair": false,
-      "outputs": 1,
-      "x": 220,
-      "y": 720,
-      "wires": [
-          [
-              "a5c97820.b0c488"
-          ]
-      ]
-  },
-  {
-      "id": "8d3304e5.e1b4b8",
-      "type": "debug",
-      "z": "39011ec7.7f9a82",
-      "name": "Raw /events",
-      "active": false,
-      "tosidebar": true,
-      "console": false,
-      "tostatus": false,
-      "complete": "payload",
-      "x": 550,
-      "y": 100,
-      "wires": []
-  },
-  {
-      "id": "fc7af45.d08d908",
-      "type": "debug",
-      "z": "39011ec7.7f9a82",
-      "name": "Send Notification",
-      "active": false,
-      "tosidebar": true,
-      "console": false,
-      "tostatus": false,
-      "complete": "payload",
-      "x": 230,
-      "y": 660,
-      "wires": []
-  },
-  {
-      "id": "3d60c524.cdef6a",
-      "type": "debug",
-      "z": "39011ec7.7f9a82",
-      "name": "Send SMS",
-      "active": false,
-      "tosidebar": true,
-      "console": false,
-      "tostatus": false,
-      "complete": "payload",
-      "x": 1090,
-      "y": 740,
-      "wires": []
-  },
-  {
-      "id": "b9888a72.1185c8",
-      "type": "function",
-      "z": "39011ec7.7f9a82",
-      "name": "Temperature Trigger Filter",
-      "func": "var trigger = false\nvar temperature = msg.payload.event.data.temperature.value\nvar maxTempTrigger = msg.payload.labels.MaxTempTrigger\nvar minTempTrigger = msg.payload.labels.MinTempTrigger\n\nif(maxTempTrigger && temperature >= maxTempTrigger) {\n    trigger = true\n}\nif(minTempTrigger && temperature <= minTempTrigger) {\n    trigger = true\n}\n\n// We keep a cache of active triggers in the global context\nvar activeTriggers=global.get(\"activeTriggers\")\nif(!activeTriggers) {\n activeTriggers=new Map();\n global.set(\"activeTriggers\",activeTriggers);\n}\n\nactive = activeTriggers.get(msg.payload.event.targetName)\nif(active != trigger) {\n    activeTriggers.set(msg.payload.event.targetName, trigger)\n    if(trigger) {\n        return msg\n    }\n}\nreturn null\n\n\n",
-      "outputs": 1,
-      "noerr": 0,
-      "x": 910,
-      "y": 360,
-      "wires": [
-          [
-              "9c0aacec.f42ae"
-          ]
-      ]
-  },
-  {
-      "id": "670975c7.617e7c",
-      "type": "change",
-      "z": "39011ec7.7f9a82",
-      "name": "",
-      "rules": [
-          {
-              "t": "set",
-              "p": "payload",
-              "pt": "msg",
-              "to": "",
-              "tot": "str"
-          }
-      ],
-      "action": "",
-      "property": "",
-      "from": "",
-      "to": "",
-      "reg": false,
-      "x": 360,
-      "y": 500,
-      "wires": [
-          []
-      ]
-  }
+    {
+        "id": "2135d0e2.1d969",
+        "type": "tab",
+        "label": "SMS Notifications",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b5f30462.436338",
+        "type": "http in",
+        "z": "2135d0e2.1d969",
+        "name": "",
+        "url": "/events",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 160,
+        "wires": [
+            [
+                "53026113.ad7d9",
+                "fd5082e5.688a9",
+                "5af339e1.20cc18"
+            ]
+        ]
+    },
+    {
+        "id": "53026113.ad7d9",
+        "type": "http response",
+        "z": "2135d0e2.1d969",
+        "name": "Event Received OK",
+        "statusCode": "200",
+        "headers": {},
+        "x": 570,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "b1e272d2.70977",
+        "type": "debug",
+        "z": "2135d0e2.1d969",
+        "name": "Notify enabled",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 580,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "37a0b43a.b1b1fc",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "Switch on type",
+        "property": "payload.event.eventType",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "touch",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "temperature",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "objectPresent",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 1020,
+        "y": 360,
+        "wires": [
+            [
+                "aafbd828.f82158"
+            ],
+            [
+                "afe0eb0a.8ecbd8"
+            ],
+            [
+                "ac4253b1.3a523"
+            ]
+        ]
+    },
+    {
+        "id": "fd5082e5.688a9",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "Notifications Enabled",
+        "property": "payload.labels.Notify",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "true",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 340,
+        "y": 360,
+        "wires": [
+            [
+                "b1e272d2.70977",
+                "3ab49fbd.91eb3"
+            ]
+        ]
+    },
+    {
+        "id": "aafbd828.f82158",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "If TouchTrigger",
+        "property": "payload.labels.TouchTrigger",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "true",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1240,
+        "y": 300,
+        "wires": [
+            [
+                "ed214c98.dcd9d"
+            ]
+        ]
+    },
+    {
+        "id": "ac4253b1.3a523",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "Trigger same as Event",
+        "property": "payload.labels.ObjectPresentTrigger",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "BOTH",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "payload.event.data.objectPresent.state",
+                "vt": "msg"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 1260,
+        "y": 420,
+        "wires": [
+            [
+                "863cc2b6.c6ac6"
+            ],
+            [
+                "ed214c98.dcd9d"
+            ]
+        ]
+    },
+    {
+        "id": "ed214c98.dcd9d",
+        "type": "link out",
+        "z": "2135d0e2.1d969",
+        "name": "Send Notification",
+        "links": [
+            "bfd7485a.1f2378"
+        ],
+        "x": 1875,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "bfd7485a.1f2378",
+        "type": "link in",
+        "z": "2135d0e2.1d969",
+        "name": "Send Notification",
+        "links": [
+            "ed214c98.dcd9d"
+        ],
+        "x": 75,
+        "y": 720,
+        "wires": [
+            [
+                "e88648d4.dd7f08",
+                "cb5de2e3.54304",
+                "62512e49.7c75"
+            ]
+        ]
+    },
+    {
+        "id": "cb5de2e3.54304",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "Has \"Phone\" label",
+        "property": "payload.labels.Phone",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 230,
+        "y": 720,
+        "wires": [
+            [
+                "95e98832.326258"
+            ]
+        ]
+    },
+    {
+        "id": "d5f1ffd3.95f09",
+        "type": "twilio out",
+        "z": "2135d0e2.1d969",
+        "service": "_ext_",
+        "twilio": "",
+        "from": "",
+        "number": "",
+        "name": "Send SMS",
+        "x": 830,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "95e98832.326258",
+        "type": "function",
+        "z": "2135d0e2.1d969",
+        "name": "Create SMS(es) from phone number(s)",
+        "func": "var phone = msg.payload.labels.Phone.split(',')\nvar smses = []\n\n/* Create one SMS for each phone number */\nfor (var i = 0; i < phone.length; i++) {\n    var sms = {\n        topic: phone[i],\n        payload: msg.message\n    }\n    smses.push(sms)\n}\n\nnode.warn(smses)\n\nreturn [ smses ]",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 530,
+        "y": 720,
+        "wires": [
+            [
+                "d5f1ffd3.95f09",
+                "ff640e9e.c6c0c"
+            ]
+        ]
+    },
+    {
+        "id": "62512e49.7c75",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "Has \"Email\" label",
+        "property": "payload.labels.Email",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 230,
+        "y": 820,
+        "wires": [
+            [
+                "21e67986.f60106"
+            ]
+        ]
+    },
+    {
+        "id": "72acbd6d.e62964",
+        "type": "e-mail",
+        "z": "2135d0e2.1d969",
+        "server": "smtp.sparkpostmail.com",
+        "port": "2525",
+        "secure": false,
+        "name": "",
+        "dname": "",
+        "x": 810,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "21e67986.f60106",
+        "type": "function",
+        "z": "2135d0e2.1d969",
+        "name": "Set Subject and Convert Format",
+        "func": "var emailSubject = msg.payload.labels.EmailSubject\nif (!emailSubject) {\n    emailSubject = \"Sensor Notification\"\n}\n\nmsg.from = \"notifications@demo.d21s.com\"\nmsg.to = msg.payload.labels.Email\nmsg.topic = emailSubject\nmsg.payload = msg.message\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 820,
+        "wires": [
+            [
+                "72acbd6d.e62964",
+                "c53301a5.4b0ed"
+            ]
+        ]
+    },
+    {
+        "id": "5af339e1.20cc18",
+        "type": "debug",
+        "z": "2135d0e2.1d969",
+        "name": "Raw /events",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 550,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "e88648d4.dd7f08",
+        "type": "debug",
+        "z": "2135d0e2.1d969",
+        "name": "Send Notification",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 230,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "c53301a5.4b0ed",
+        "type": "debug",
+        "z": "2135d0e2.1d969",
+        "name": "Send Email",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 830,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "ff640e9e.c6c0c",
+        "type": "debug",
+        "z": "2135d0e2.1d969",
+        "name": "Send SMS",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 830,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "afe0eb0a.8ecbd8",
+        "type": "function",
+        "z": "2135d0e2.1d969",
+        "name": "Temperature Trigger Filter",
+        "func": "var trigger = false\nvar temperature = msg.payload.event.data.temperature.value\nvar maxTempTrigger = msg.payload.labels.MaxTempTrigger\nvar minTempTrigger = msg.payload.labels.MinTempTrigger\n\nif(maxTempTrigger && temperature >= maxTempTrigger) {\n    trigger = true\n}\nif(minTempTrigger && temperature <= minTempTrigger) {\n    trigger = true\n}\n\n// We keep a cache of active triggers in the global context\nvar activeTriggers=global.get(\"activeTriggers\")\nif(!activeTriggers) {\n activeTriggers=new Map();\n global.set(\"activeTriggers\",activeTriggers);\n}\n\nactive = activeTriggers.get(msg.payload.event.targetName)\nif(active != trigger) {\n    activeTriggers.set(msg.payload.event.targetName, trigger)\n    if(trigger) {\n        return msg\n    }\n}\nreturn null\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1270,
+        "y": 360,
+        "wires": [
+            [
+                "ed214c98.dcd9d"
+            ]
+        ]
+    },
+    {
+        "id": "3ab49fbd.91eb3",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "Has \"Message\" label",
+        "property": "payload.labels.Message",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 600,
+        "y": 360,
+        "wires": [
+            [
+                "755c6ee9.b7776"
+            ]
+        ]
+    },
+    {
+        "id": "755c6ee9.b7776",
+        "type": "change",
+        "z": "2135d0e2.1d969",
+        "name": "Set default Message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "message",
+                "pt": "msg",
+                "to": "payload.labels.Message",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 360,
+        "wires": [
+            [
+                "37a0b43a.b1b1fc"
+            ]
+        ]
+    },
+    {
+        "id": "d9795dce.bc43b",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "Has \"AltMessage\" label",
+        "property": "payload.labels.AltMessage",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1510,
+        "y": 520,
+        "wires": [
+            [
+                "ed214c98.dcd9d"
+            ],
+            [
+                "256476f3.4e760a"
+            ]
+        ]
+    },
+    {
+        "id": "863cc2b6.c6ac6",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "Switch on state",
+        "property": "payload.event.data.objectPresent.state",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "PRESENT",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "NOT_PRESENT",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1480,
+        "y": 460,
+        "wires": [
+            [
+                "ed214c98.dcd9d"
+            ],
+            [
+                "d9795dce.bc43b",
+                "89f6e92f.407ca8"
+            ]
+        ]
+    },
+    {
+        "id": "256476f3.4e760a",
+        "type": "change",
+        "z": "2135d0e2.1d969",
+        "name": "Set AltMessage",
+        "rules": [
+            {
+                "t": "set",
+                "p": "message",
+                "pt": "msg",
+                "to": "payload.labels.AltMessage",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1480,
+        "y": 580,
+        "wires": [
+            [
+                "ed214c98.dcd9d"
+            ]
+        ]
+    },
+    {
+        "id": "8e50cf37.0106b",
+        "type": "comment",
+        "z": "2135d0e2.1d969",
+        "name": "Use AltMessage for NOT_PRESENT if ObjectPresentTrigger is set to BOTH",
+        "info": "",
+        "x": 1480,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "89f6e92f.407ca8",
+        "type": "debug",
+        "z": "2135d0e2.1d969",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1900,
+        "y": 560,
+        "wires": []
+    }
 ]
