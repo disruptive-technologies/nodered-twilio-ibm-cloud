@@ -60,6 +60,11 @@
         "rules": [
             {
                 "t": "eq",
+                "v": "connectionStatus",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
                 "v": "touch",
                 "vt": "str"
             },
@@ -76,10 +81,13 @@
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 3,
+        "outputs": 4,
         "x": 1020,
         "y": 360,
         "wires": [
+            [
+                "6e3ccc85.aa8494"
+            ],
             [
                 "aafbd828.f82158"
             ],
@@ -146,7 +154,7 @@
         "id": "ac4253b1.3a523",
         "type": "switch",
         "z": "2135d0e2.1d969",
-        "name": "Trigger same as Event",
+        "name": "ObjectTrigger same as Event",
         "property": "payload.labels.ObjectPresentTrigger",
         "propertyType": "msg",
         "rules": [
@@ -164,7 +172,7 @@
         "checkall": "false",
         "repair": false,
         "outputs": 2,
-        "x": 1260,
+        "x": 1280,
         "y": 420,
         "wires": [
             [
@@ -282,19 +290,6 @@
         ]
     },
     {
-        "id": "72acbd6d.e62964",
-        "type": "e-mail",
-        "z": "2135d0e2.1d969",
-        "server": "smtp.sparkpostmail.com",
-        "port": "2525",
-        "secure": false,
-        "name": "",
-        "dname": "",
-        "x": 810,
-        "y": 800,
-        "wires": []
-    },
-    {
         "id": "21e67986.f60106",
         "type": "function",
         "z": "2135d0e2.1d969",
@@ -306,8 +301,8 @@
         "y": 820,
         "wires": [
             [
-                "72acbd6d.e62964",
-                "c53301a5.4b0ed"
+                "c53301a5.4b0ed",
+                "70717ed8.7ba32"
             ]
         ]
     },
@@ -372,7 +367,7 @@
         "type": "function",
         "z": "2135d0e2.1d969",
         "name": "Temperature Trigger Filter",
-        "func": "var trigger = false\nvar temperature = msg.payload.event.data.temperature.value\nvar maxTempTrigger = msg.payload.labels.MaxTempTrigger\nvar minTempTrigger = msg.payload.labels.MinTempTrigger\n\nif(maxTempTrigger && temperature >= maxTempTrigger) {\n    trigger = true\n}\nif(minTempTrigger && temperature <= minTempTrigger) {\n    trigger = true\n}\n\n// We keep a cache of active triggers in the global context\nvar activeTriggers=global.get(\"activeTriggers\")\nif(!activeTriggers) {\n activeTriggers=new Map();\n global.set(\"activeTriggers\",activeTriggers);\n}\n\nactive = activeTriggers.get(msg.payload.event.targetName)\nif(active != trigger) {\n    activeTriggers.set(msg.payload.event.targetName, trigger)\n    if(trigger) {\n        return msg\n    }\n}\nreturn null\n\n\n",
+        "func": "var trigger = false\nvar temperature = msg.payload.event.data.temperature.value\nvar maxTempTrigger = msg.payload.labels.MaxTempTrigger\nvar minTempTrigger = msg.payload.labels.MinTempTrigger\nvar altMessage = msg.payload.labels.AltMessage\n\nif(maxTempTrigger && temperature >= maxTempTrigger) {\n    trigger = true\n}\nif(minTempTrigger && temperature <= minTempTrigger) {\n    trigger = true;\n    if(altMessage) {\n        msg.message = altMessage;\n    }\n}\n\n// We keep a cache of active triggers in the global context\nvar activeTriggers=global.get(\"activeTriggers\")\nif(!activeTriggers) {\n activeTriggers=new Map();\n global.set(\"activeTriggers\",activeTriggers);\n}\n\nactive = activeTriggers.get(msg.payload.event.targetName)\nif(active != trigger) {\n    activeTriggers.set(msg.payload.event.targetName, trigger)\n    if(trigger) {\n        return msg\n    }\n}\nreturn null\n\n\n",
         "outputs": 1,
         "noerr": 0,
         "x": 1270,
@@ -538,7 +533,7 @@
         "type": "debug",
         "z": "2135d0e2.1d969",
         "name": "",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -546,5 +541,60 @@
         "x": 1900,
         "y": 560,
         "wires": []
+    },
+    {
+        "id": "70717ed8.7ba32",
+        "type": "e-mail",
+        "z": "2135d0e2.1d969",
+        "server": "",
+        "port": "",
+        "secure": false,
+        "tls": false,
+        "name": "",
+        "dname": "",
+        "x": 811.5208892822266,
+        "y": 793.8646011352539,
+        "wires": []
+    },
+    {
+        "id": "7119b6b8.0ae018",
+        "type": "function",
+        "z": "2135d0e2.1d969",
+        "name": "ConnectionStatus Trigger Filter",
+        "func": "var online = true;\nvar connection = msg.payload.event.data.connectionStatus.connection;\nvar altMessage = msg.payload.labels.AltMessage;\n\nif(connection == \"OFFLINE\") {\n    online = false;\n} else {\n    online = true;\n    if(altMessage) {\n        msg.message = altMessage;\n    } else {\n        msg.message = msg.payload.event.targetName + \n          \" is ONLINE. Set 'AltMessage' label to change this message\";\n    }\n}\n\n// We keep a cache of connection state in the global context\nvar connectionState=global.get(\"connectionState\")\nif(!connectionState) {\n connectionState=new Map();\n global.set(\"connectionState\",connectionState);\n}\n\nvar state = connectionState.get(msg.payload.event.targetName);\nif(state != online) {\n    connectionState.set(msg.payload.event.targetName, online);\n    return msg;\n}\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1537.1911811828613,
+        "y": 166.1320333480835,
+        "wires": [
+            [
+                "ed214c98.dcd9d"
+            ]
+        ]
+    },
+    {
+        "id": "6e3ccc85.aa8494",
+        "type": "switch",
+        "z": "2135d0e2.1d969",
+        "name": "If ConnectionTrigger",
+        "property": "payload.labels.ConnectionTrigger",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "true",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1263.0172882080078,
+        "y": 167.01043701171875,
+        "wires": [
+            [
+                "7119b6b8.0ae018"
+            ]
+        ]
     }
 ]
